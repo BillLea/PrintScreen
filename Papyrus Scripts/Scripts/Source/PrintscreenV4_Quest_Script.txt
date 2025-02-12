@@ -1,0 +1,78 @@
+Scriptname PrintscreenV4_Quest_Script extends Quest  
+  
+;Define Properties
+int Property TakePhoto auto  
+int Property KeyMapCode auto
+int Property KeyCode auto 
+String Property ImageType auto 
+String Property Path auto
+Bool Property Menu auto 
+bool property bConfigOpen auto
+float property Compression auto
+
+int shots = 0
+String Result = "Sucess"
+Event onInit()
+    ;Define Default values
+
+    shots = 0    
+    bConfigOpen = false 
+    Menu = true
+    TakePhoto = 14
+    Imagetype = "PNG"
+    Path = "C:/Pictures/test"    
+    Menu = true
+	  Compression = 85.0 
+
+    RegisterForKey(TakePhoto)
+	
+;Debug.MessageBox("Printscreen version 4.0.0 " + "\n" + Path)
+
+EndEvent
+
+Event OnKeyUP(int theKey, float holdtime)
+    ;Check that MCM or text input not active
+       ;here need to test for text input to  avoid inadvetent triggering
+      if(bConfigOpen);make sure the MCM is not open
+       ;Debug.MessageBox("MCM open return")
+        return 
+      else
+        ;Debug.MessageBox("bConfigOpen False")
+        if(ui.istextinputenabled());Text Entry enabled
+          Debug.MessageBox("Text input Enabled Return")
+          return 
+      else
+       ;Debug.Notification("Text not active")        
+       ;Debug.Notification("Keycode: "+ keycode + "\nTakePicture code: " +takePhoto)
+       if(theKey == TakePhoto)
+         ;Debug.Notification("the TakePicture key was: " + TakePhoto  )
+         if(Menu)
+           ConsoleUtil.ExecuteCommand("tm")
+        endif
+       ;Debug.MessageBox("Calling function PrintScreenV4\n" + \
+       ;"Path: "+ Path + \
+;        "\nImageType: "+ Imagetype + \
+ ;      "\nCompression: " + Compression) 
+         
+       Result = PrintScreenV4_Formula_Script.PrintScreenV4(Path, ImageType, Compression)
+       ;Debug.MessageBox("Result returned as: [" + Result + "]" )      
+      endif 
+    endif
+       
+        if(Menu)
+              ConsoleUtil.ExecuteCommand("tm")
+        endif      
+      ;debug.MessageBox("PrintScreenV4 returned: ["+ Result+"]")
+    if (Result != "Success")
+      Debug.MessageBox("PrintScreenFunction failed.Result Returned\n["+ Result + "]")
+      
+    else
+          shots = shots + 1          
+          Debug.Notification( Shots +" Screen Images captured to "+ Path  )
+      endif
+    endif
+  EndEvent
+  
+  
+
+
