@@ -187,8 +187,8 @@ if(Result != "Success")
   debug.messageBox("Printscreen - Json Path failed validation \n use MCM to fix")
   
 else
-  Debug.MessageBox("Path validated succeccfully\n"+ Path)
-  
+ ; Debug.MessageBox("Path validated succeccfully\n"+ Path)
+  Path = TestPath
 endif
 endif 
 endif

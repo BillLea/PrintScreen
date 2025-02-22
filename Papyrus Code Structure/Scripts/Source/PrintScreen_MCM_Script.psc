@@ -97,6 +97,8 @@ event OnOptionHighlight(int option)
 setinfoText("Enter path to Image Storage")
 elseif(option == CompressionID)
 SetInfoText("Select QUALITY factor for jpg and Tiff files  50-LOWEST TO 100 HIGHEST quality")
+elseif(option == UseJsonFileID)
+  SetInfoText("Enable Configuration Paramiters to be Saved/Restored")
   endif 
 EndEvent
 
