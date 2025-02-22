@@ -6,14 +6,23 @@ int Property KeyMapCode auto
 int Property KeyCode auto 
 int Property Validate auto
 int Property shots auto
+bool Property UseJsonFile auto 
 String Property ImageType auto 
 String Property Path auto
 Bool Property Menu auto 
 bool property bConfigOpen auto
-float property Compression auto
-String Result = "Sucess"
-String Property Version  auto 
 
+float property Compression auto
+String Result = ""
+String Property Version  auto 
+bool Property Read_Write_Config auto
+String Property JsonFileName auto
+String Property KeyName_Path auto
+String Property KeyName_TakePhoto auto
+String Property Keyname_Menu auto
+String Property  KeyName_Compression auto
+String Property Keyname_ImageType auto
+String Property KeyName_UseJsonFile auto
 ; Common menu names for IsMenuOpen()
 ;"BarterMenu"
 ;"BookMenu"
@@ -40,79 +49,148 @@ String Property Version  auto
 ;"Training Menu"
 ;"Cursor Menu"
 ; Output from Claude Desktop May be an incomplete list appears
-;different from list used in Hltimate Immersion Mod by Luca
+;different from list used in Ultimate Immersion Mod by Luca
 ;will have to explore this in more detail.
 ;The term HUD works to turn off the menu but Not 
 ;to restore it. tThis is because IsopenMenu wont return
 ;propper result for HUD Menu. Just turn it on and forget about
 ;syncronizing with other mods.
+function Sanatize_ImageType()
+  If(Imagetype == "png")
+    return
+  elseif(Imagetype == "bmp")
+    return
+  elseif(Imagetype == "jpeg")
+    return
+  elseif(ImageType == "gif")
+    return
+  elseif(Imagetype == "Tif")
+    return
+  else
+    ImageType = "png"
+    return
+  endif 
+endFunction
+
 
 bool Function IsMenuOpen(string MenuName)
-;  debug.MessageBox("ISMenu Open was " + menuName + " open "+UI.IsMenuOpen(menuName)  )
+ ;debug.MessageBox("ISMenu Open Returned " + menuName + " open "+ UI.IsMenuOpen(menuName)  )
 return  UI.IsMenuOpen(menuName)
 Endfunction
 
 function OpenMenus()
- ;Only open closed menusInt
- If(!IsMenuOpen( "DialogueMenu"))
-  ;Debug.MessageBox("Dialogue Menu is not Open")
-  UI.SetInt("DialogueMenu","_root.alpha", 100)
- Endif
 
-
-  UI.SetInt("HUD Menu", "_root._alpha", 100)
-
+ ;Open everything
+ UI.SetInt("TrueHUD", "_root._alpha", 100)
+ UI.SetInt("HUD Menu", "_root._alpha", 100)
+ UI.SetInt("Dialogue Menu","_root.alpha", 100)
+ 
   If(!IsMenuOpen("MiniMapMenu"))
     UI.SetInt("MiniMapMenu", "_root._alpha", 100)
- Endif
- If(!IsMenuOpen("TrueHUD"))
-   UI.SetInt("TrueHUD", "_root._alpha", 100)
- Endif
+ Endif   
 Return 
 EndFunction
 
 Function CloseMenus()  
   ;Only close Open Menus 
- if(IsMenuOpen("Dialogue Menu")) 
-  ;Debug.MessageBox("The Dialog Menu was Open")
-  ;this cancells the ("Dialogue Menu ") display
-    UI.SetInt("DialogueMenu", "_root._alpha", 0)
- Endif 
+  UI.SetInt("TrueHUD", "_root._alpha", 0)
+  UI.SetInt("Dialogue Menu", "_root._alpha", 0)
+
  If(IsMenuOpen("HUD Menu"))
-  ;Debug.MessageBox("On close HUD the HUD was found open")
-  ;This cancells the HUD Display
   UI.SetInt("HUD Menu", "_root._alpha", 0)
  EndIf  
+
  If(IsMenuOpen("MiniMapMenu"))
      UI.SetInt("MiniMapMenu", "_root._alpha", 0)
 Endif 
- If(IsMenuOpen("TrueNUD"))
-     UI.SetInt("TrueHUD", "_root._alpha", 0)
- EndIf
-
 return 
 EndFunction
 
 Event onInit()
     ;Define Default values
-    Version="1.0.1"
-    Validate =1
+    Version="1.0.5"
+    
     shots = 0    
     bConfigOpen = false 
+    UseJsonFile=False
+    JsonFilename = "Printscreen_Configure"
+    KeyName_Compression = "Compression"
+    Keyname_ImageType = "ImageType"
+    KeyName_TakePhoto= "TakePhoto"
+    KeyName_Path= "Path"
+    Keyname_Menu = "Menu"
+    KeyName_UseJsonFile = "UseJsonFile"
+
     Menu = true
     TakePhoto = 14
     Imagetype = "PNG"
     Path = "C:/Pictures" 
 	  Compression = 85.0 
-
     RegisterForKey(TakePhoto)
 ;Validate initial path on startup
- Result = PrintScreen_formula_SCript.PrintScreen(Validate,Path,Imagetype,Compression )
+ Result = PrintScreen_formula_SCript.PrintScreen(1,Path,Imagetype,Compression )
 if(Result != "Success")
   debug.messageBox("Printscreen - On Initialization Path failed validation \n use MCM to fix")
-  Validate = 1 ;Inital validation failed
+
 else
-  validate = 0 ;Inital Path validated
+  ;Debug.MessageBox("Path validated succeccfully\n"+ Path)
+
+endif
+;json logic. How to determine if a jason file should be loaded.
+; if the file exists read from it. I the useJason is 1 load defaaults
+; if usejason is 0 do not load variables.
+; In the MCM load any variables which are changed
+;when the MCM is closedwrite out variables.
+
+if(!jsonUtil.jsonExists(JsonFilename))
+  Debug.MessageBox("Json file Not Found - create it")
+;Create the jason file
+JsonUtil.SetIntValue(JsonFilename,KeyName_TakePhoto,TakePhoto )
+jsonUtil.SetStringValue(jsonFileName, KeyName_Path,Path)
+jsonUtil.SetFloatValue(jsonFileName, KeyName_Compression,Compression)
+if(menu)
+  jsonUtil.SetIntValue(jsonFileName, Keyname_Menu,1)
+else
+  jsonUtil.SetIntValue(jsonFileName, Keyname_Menu,0)
+Endif
+jsonUtil.SetStringValue(jsonFilename, Keyname_ImageType, ImageType)
+if(useJsonFile)
+  jsonUtil.SetIntValue(jsonFileName,KeyName_UseJsonFile,1)
+else
+  jsonUtil.SetIntValue(jsonFileName,KeyName_UseJsonFile,0)
+endif
+Debug.MessageBox("Json file initially created")
+jsonUtil.Save(jsonFileName, false)
+else
+;json file exists if good check 
+if(JsonUtil.isGood(jsonFilename) && (jsonUtil.getIntValue(jsonFileName,KeyName_UseJsonFile) ==1))
+  ;Read values and assign to defaults
+  Compression = JsonUtil.GetFloatValue(jsonFilename, KeyName_Compression  )
+  ImageType = JsonUtil.getStringValue(jsonFileName,Keyname_ImageType)
+  Sanatize_ImageType()
+  ;Need to sanatize user input here for Item Type
+  TakePhoto = JsonUtil.getIntvalue(jsonFileName, KeyName_TakePhoto)
+  if(jsonUtil.getintvalue(jsonFileName,Keyname_Menu) == 1 )
+    Menu = True     
+  else
+    Menu = False
+  endif
+  If(JsonUtil.GetIntValue(JsonFilename,KeyName_UseJsonFile)==1)
+    useJsonFile = True
+  else
+    UseJsonFile = False
+  Endif
+
+String TestPath = JsonUtil.GetStringValue(jsonFileName, KeyName_Path)
+Result = PrintScreen_formula_SCript.PrintScreen(1,TestPath,Imagetype,Compression )
+if(Result != "Success")
+  debug.messageBox("Printscreen - Json Path failed validation \n use MCM to fix")
+  
+else
+  Debug.MessageBox("Path validated succeccfully\n"+ Path)
+  
+endif
+endif 
 endif
 EndEvent
 
@@ -139,12 +217,3 @@ Event OnKeyUP(int theKey, float holdtime)
     OpenMenus()
   endif
 EndEvent
-  
-  ;The problem here is in keeping the menu open/closure in sync with the actual state
-  ;of the menu system. 
-  ;We may actually need to test each menu we fiddle with 
-  ; individually on both open and close.
-
-
-
-

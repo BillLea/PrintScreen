@@ -10,7 +10,7 @@ int Property PhotoKeyID auto
 int Property RemoveMenuID auto
 int Property keyCodeID auto
 int Property CompressionID auto  
-
+int Property UseJsonFileID auto
 String[] function OptionArray()
   int size= 5
   string[] OpArray = Utility.CreateStringArray(size )
@@ -69,19 +69,20 @@ Endif
 if(pagename == "Settings")
     SetCursorFillmode(TOP_TO_BOTTOM )
     SetCursorPosition(0)
-    AddheaderOption("Printscreen version 1.01")
-    AddHeaderOption("Path,Image Type, Menu, Photo Key" ,0)
+    AddheaderOption("Printscreen version"+Test.Version)
+    
     addEmptyOption() 
     PathID = AddInputOption("Path",Test.Path, OPTION_FLAG_NONE)
     AddEmptyOption() 
-    ImageTypeID = AddMenuOption("Select Image file type",OptionArray()[0] , 0)
+    int I = OptionArray().Find(Test.ImageType)
+    ImageTypeID = AddMenuOption("Select Image file type",OptionArray()[I] , 0)
    AddEmptyOption() 
    RemoveMenuID = AddToggleOption("Automatic Menu Revoval",Test.Menu, 0)
    AddEmptyOption()
    CompressionID =  AddSliderOption("Compression",50.0,"{0}", 0)
-
    KeyCodeID = AddKeyMapOption( "Select Take Photo Key", Test.TakePhoto, 0)
-   
+  AddEmptyOption()   
+   UseJsonFileID = AddToggleOption("Save/Restore Configuration",Test.UseJsonFile)
 EndIf
 EndEvent
 
@@ -123,6 +124,10 @@ Event  OnOptionSelect(int Option)
     Test.Menu = !Test.menu
     SetToggleOptionValue(Option,Test.menu, false)
   endif
+  if(option == UseJsonFileID)
+    Test.UseJsonFile = ! Test.UseJsonFile
+    SetToggleOptionValue(option,Test.UseJsonFile,false)
+  Endif
 endevent
 
 ; process keyCode selection
@@ -146,10 +151,14 @@ event OnOptionMenuOpen(int Option)
 if(Option == ImageTypeID)
   ;build optionArray
  
-  ;Set menu contents here
+  ;Set menu contents here - need to find te correct index
+
+
+SetMenuDialogOptions(OptionArray())
 	SetMenuDialogDefaultIndex(0)
 	SetMenuDialogStartIndex(0)
-	SetMenuDialogOptions(OptionArray())
+  
+  
 endif
 EndEvent
 
@@ -179,5 +188,17 @@ event OnConfigClose()
   ;PrintScreenKey while the MCM is open
   Test.bConfigOpen = false 
   RegisterforKey(Test.TakePhoto )
-  ;Debug.MessageBox("MCM menu closed: bConfigOpen = " + Test.bConfigOpen)
+if(Test.UseJsonFile)
+  JsonUtil.SetFloatValue(Test.jsonFilename,Test.Keyname_Compression, Test.Compression)
+  JsonUtil.SetStringValue(Test.jsonFilename, Test.Keyname_ImageType, Test.ImageType)
+  JsonUtil.SetStringValue(Test.jsonFilename, Test.KeyName_Path, Test.Path)
+  JsonUtil.SetIntValue(Test.jsonFilename, Test.keyName_TakePhoto, Test.TakePhoto)
+  jsonUtil.SetIntValue(Test.jsonFilename, Test.KeyName_UseJsonFile,1)
+  if(Test.Menu)
+    JsonUtil.SetIntValue(Test.jsonFilename, Test.KeyName_Menu,1)
+  else
+    JsonUtil.SetIntValue(Test.jsonFilename, Test.Keyname_Menu,0)
+  EndIf
+  JsonUtil.Save(Test.jsonFilename)
+Endif
 EndEvent
