@@ -1,3 +1,0 @@
-Scriptname PrintScreenV4_formula_Script extends Quest
-
-string Function PrintScreenV4(  String Path, String ImageType, float Compression ) global native
