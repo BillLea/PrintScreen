@@ -1,6 +1,4 @@
-Scriptname PrintScreen_MainQuest_Script extends Quest  
-  
-;Define Properties
+ScriptName PrintScreen_MainQuest_Script extends Quest
 int Property TakePhoto auto  
 int Property KeyMapCode auto
 int Property KeyCode auto 
@@ -24,6 +22,7 @@ String Property  KeyName_Compression auto
 String Property Keyname_ImageType auto
 String Property KeyName_UseJsonFile auto
 ; Common menu names for IsMenuOpen()
+;"Item Card"
 ;"BarterMenu"
 ;"BookMenu"
 ;"ConsoleMenu"
@@ -55,6 +54,32 @@ String Property KeyName_UseJsonFile auto
 ;to restore it. tThis is because IsopenMenu wont return
 ;propper result for HUD Menu. Just turn it on and forget about
 ;syncronizing with other mods.
+
+Function DumpMenuInfo()
+  Debug.Trace("Checking menus...")
+  
+  ; Check which menu is actually open
+  if UI.IsMenuOpen("ItemCard")
+    Debug.MessageBox("ItemCard is open")
+endif
+
+  if UI.IsMenuOpen("InventoryMenu")
+      Debug.Trace("InventoryMenu is open")
+  endif
+  
+  if UI.IsMenuOpen("ContainerMenu")
+      Debug.Trace("ContainerMenu is open")
+  endif
+  
+  if UI.IsMenuOpen("BarterMenu")
+      Debug.Trace("BarterMenu is open")
+  endif
+  
+  if UI.IsMenuOpen("ItemMenu")
+      Debug.Trace("ItemMenu is open")
+  endif
+EndFunction
+
 function Sanatize_ImageType()
   If(Imagetype == "png")
     return
@@ -79,12 +104,14 @@ return  UI.IsMenuOpen(menuName)
 Endfunction
 
 function OpenMenus()
-
  ;Open everything
  UI.SetInt("TrueHUD", "_root._alpha", 100)
+ UI.Setint("immersiveHud","_root.alpha",100)
  UI.SetInt("HUD Menu", "_root._alpha", 100)
  UI.SetInt("Dialogue Menu","_root.alpha", 100)
- 
+ UI.SetINt("CursorMenu","_root.alpha",100)
+ UI.SetBool("CrosshairMenu", "Enabled", true)
+ UI.SetBool("ActivateMenu", "Enabled", true)
   If(!IsMenuOpen("MiniMapMenu"))
     UI.SetInt("MiniMapMenu", "_root._alpha", 100)
  Endif   
@@ -92,13 +119,30 @@ Return
 EndFunction
 
 Function CloseMenus()  
-  ;Only close Open Menus 
-  UI.SetInt("TrueHUD", "_root._alpha", 0)
-  UI.SetInt("Dialogue Menu", "_root._alpha", 0)
 
- If(IsMenuOpen("HUD Menu"))
+  ;Only close Open Menus 
   UI.SetInt("HUD Menu", "_root._alpha", 0)
- EndIf  
+  UI.SetInt("TrueHUD", "_root._alpha", 0)
+  UI.Setint("immersiveHud","_root.alpha", 0)
+  UI.SetInt("Dialogue Menu", "_root._alpha", 0)  
+UI.SetINt("CursorMenu","_root.alpha",0)
+UI.SetBool("CrosshairMenu", "Enabled", false)
+  ui.SetBool("ActivateMenu", "Enabled", false)
+
+
+
+;UI.SetBool("HUD Menu", "_root.RolloverIndication._alpha", 0)
+
+  ;UI.SetInt("MainMenu", "_root.alpha",0)
+  ;UI.SetInt("Cursor Menu", "_root.alpha",0)
+  ;UI.SetInt("ContainerMenu","_root.alpha",0 )
+  ;UI.SetInt("ItemCarduMenu","_root.alpha",0)
+ ; UI.SetInt("ItemMenu", "_root.alpha",0)
+ ; UI.SetBool("ItemMenu", "ItemCardEnabled", false)
+ ; UI.SetInt("InventoryMenu", "_root.ItemCard._alpha", 0)
+  ;UI.SetBool("Inventory Menu", "ItemCardEnabled", false)
+
+
 
  If(IsMenuOpen("MiniMapMenu"))
      UI.SetInt("MiniMapMenu", "_root._alpha", 0)

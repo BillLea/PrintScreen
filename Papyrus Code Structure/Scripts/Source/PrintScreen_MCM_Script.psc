@@ -69,7 +69,7 @@ Endif
 if(pagename == "Settings")
     SetCursorFillmode(TOP_TO_BOTTOM )
     SetCursorPosition(0)
-    AddheaderOption("Printscreen version"+Test.Version)
+    AddheaderOption("Printscreen version "+Test.Version)
     
     addEmptyOption() 
     PathID = AddInputOption("Path",Test.Path, OPTION_FLAG_NONE)
@@ -107,7 +107,7 @@ EndEvent
 event OnOptionInputAccept(int a_option, string a_input)
 	if(a_Option == PathID)  
     Test.validate=1
-String Result=PrintScreen_formula_Script.PrintScreen(Test.Validate, a_input,Test.ImageType,85.0)
+String Result=PrintScreen_formula_Script.PrintScreen(1, a_input,Test.ImageType,85.0)
 		if(Result== "Success") 
       Test.Path =a_input
       SetInputOptionValue(a_Option,Test.Path,false)
