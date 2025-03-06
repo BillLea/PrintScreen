@@ -1,0 +1,18 @@
+{
+	"float" : 
+	{
+		"compression" : 85.0
+	},
+	"int" : 
+	{
+		"menu" : 1,
+		"takephoto" : 14,
+		"usejsonfile" : 1
+	},
+	"string" : 
+	{
+		"dds_compression" : "bc7",
+		"imagetype" : "dds",
+		"path" : "C:/Pictures/Test/Vanilla"
+	}
+}

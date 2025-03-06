@@ -9,4 +9,4 @@ Scriptname PrintScreen_Formula_Script extends Quest
 ;In this way a failure of the specified path will occur while the user is
 ;activly changing the path in the MCM. 
 
-string Function PrintScreen( int Validate, String Path, String ImageType, float Compression ) global native
+string Function PrintScreen( int Validate, String Path, String ImageType, float Compression, string ddsCompressionType) global native
