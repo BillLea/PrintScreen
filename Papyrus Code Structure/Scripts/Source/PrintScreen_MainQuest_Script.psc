@@ -101,37 +101,33 @@ function Sanatize_ImageType()
   endif 
 endFunction
 function Sanatize_DDS_Compression()
-  if(DDS_Compression == "uncompressed")
+  if(DDS_Compression == "UNCOMPRSSED")
     return
   ElseIF(DDS_Compression == "BC1")
     return
   elseif(DDS_Compression == "BC2")
     return
-  elseif(DDS_Compression == "bc3")
+  elseif(DDS_Compression == "BC3")
     return
-  elseif(DDS_Compression == "bc4" )
+  elseif(DDS_Compression == "BC4" )
     return
   elseif(DDS_Compression == "BC5")
     return
-  Elseif(DDS_Compression == "bc6")
+  Elseif(DDS_Compression == "BC6H")
     return
-  elseif(DDS_Compression == "bc7_fast")
+  elseif(DDS_Compression == "BC7_FAST")
     return
-  elseif(DDS_Compression == "bc7")
+  elseif(DDS_Compression == "BC7")
     return
   else
-    DDS_Compression = "uncompressed"
+    DDS_Compression = "UNCOMPRESSED"  ;
     Return
   endif
 EndFunction
 
-bool Function IsMenuOpen(string MenuName)
- ;debug.MessageBox("ISMenu Open Returned " + menuName + " open "+ UI.IsMenuOpen(menuName)  )
-return  UI.IsMenuOpen(menuName)
-Endfunction
 
 function OpenMenus()
- ;Open everything.
+ ;Open Everything.
  UI.SetInt("HUD Menu", "_root._alpha", 100)
  UI.SetInt("TrueHUD", "_root._alpha", 100)
  UI.Setint("immersiveHud","_root.alpha",100)
@@ -148,12 +144,13 @@ EndFunction
 
 Function CloseMenus()  
 
-  ;Only close Open Menus 
+  ;Close Everything 
 
   UI.SetInt("HUD Menu", "_root._alpha", 0)
   UI.SetInt("TrueHUD", "_root._alpha", 0)
   UI.Setint("immersiveHud","_root.alpha", 0)
   UI.SetInt("MiniMapMenu", "_root._alpha", 0)
+
   UI.SetInt("Dialogue Menu", "_root._alpha", 0)  
   UI.SetINt("CursorMenu","_root.alpha",0)
   UI.Setint("CrosshairMenu", "_root.alpha",0)
@@ -176,14 +173,14 @@ Event onInit()
     KeyName_Path= "Path"
     Keyname_Menu = "Menu"
     KeyName_UseJsonFile = "UseJsonFile"
-KeyName_DDS_Compression = "DDS_Compression"
+    KeyName_DDS_Compression = "DDS_Compression"
 
     Menu = true
     TakePhoto = 14
     Imagetype = "PNG"
     Path = "C:/Pictures" 
 	  Compression = 85.0 
-    DDS_Compression  = "No Compresssion"
+    DDS_Compression  = "UNCOMPRESSED"
     RegisterForKey(TakePhoto)
 ;Validate initial path on startup
  Result = PrintScreen_formula_SCript.PrintScreen(1,Path,Imagetype,Compression,DDS_Compression )
