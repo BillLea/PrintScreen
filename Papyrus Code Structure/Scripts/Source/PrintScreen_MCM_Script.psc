@@ -16,7 +16,7 @@ int J = 0
 String[] Function DDSArray()
   Int size=9
   string[] dds = Utility.CreateStringArray(size )
-  dds[0] = "UNCOMPRESSED"
+  dds[0] = "Uncompressed"
   dds[1] = "BC1"
   dds[2] = "BC2"
   dds[3] = "BC3"
@@ -97,7 +97,7 @@ if(pagename == "Settings")
    AddEmptyOption() 
    RemoveMenuID = AddToggleOption("Automatic Menu Revoval",Test.Menu, 0)
    AddEmptyOption()
-   CompressionID =  AddSliderOption("JPG?TIF Quality",Test.Compression,"{0}", 0)
+   CompressionID =  AddSliderOption("Compression",Test.Compression,"{0}", 0)
    KeyCodeID = AddKeyMapOption( "Select Take Photo Key", Test.TakePhoto, 0)
   AddEmptyOption()   
    UseJsonFileID = AddToggleOption("Save/Restore Configuration",Test.UseJsonFile)
@@ -109,7 +109,7 @@ if(pagename == "Settings")
   if(J<0)
     J=0
   Endif
-DDS_CompressionID = AddMenuOption("DDS Mode",\
+DDS_CompressionID = AddMenuOption("DDS Compression",\
    DDSArray()[J],0)
   EndIf
 EndEvent
@@ -128,7 +128,7 @@ SetInfoText("Select QUALITY factor for jpg and Tiff files  50-LOWEST TO 100 HIGH
 elseif(option == UseJsonFileID)
   SetInfoText("Enable Configuration Paramiters to be Saved/Restored")
 elseif(option == DDS_CompressionID)
-  SetInfoText("Select DDS mode of operation\nNote BC6h, BC7_Fast and BC7 Take several minutes")
+  SetInfoText("Select compression method for DDS files\nNote BC7 Takes several seconds")
   endif 
 EndEvent
 

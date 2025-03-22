@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)  # VS2022 uses CMake 3.21+
-project(PrintScreen VERSION 1.5.0 LANGUAGES CXX)
+project(PrintScreen VERSION 1.6.0 LANGUAGES CXX)
 
 # Setup output folder logic
 if(DEFINED ENV{SKYRIM_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_FOLDER}/Data")
