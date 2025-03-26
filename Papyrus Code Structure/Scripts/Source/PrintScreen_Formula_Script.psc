@@ -9,4 +9,6 @@ Scriptname PrintScreen_Formula_Script extends Quest
 ;In this way a failure of the specified path will occur while the user is
 ;activly changing the path in the MCM. 
 
-string Function PrintScreen( int Validate, String Path, String ImageType, float Compression, string ddsCompressionType) global native
+;Recenty I moved HUD?Menu control into the SKSE function.  I added a new control variable int nid_control. If it is 1 the HUD is switched if 0 the HUD is not Switched.
+
+string Function PrintScreen( int Validate, String Path, String ImageType, float Compression,string ddsCompressionType) global native

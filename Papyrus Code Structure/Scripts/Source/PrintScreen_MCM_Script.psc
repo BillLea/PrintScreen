@@ -13,10 +13,12 @@ int Property CompressionID auto
 int Property DDS_CompressionID auto  
 int Property UseJsonFileID auto
 int J = 0
+String MyPath = ""  
+String InfoText=""
 String[] Function DDSArray()
   Int size=9
   string[] dds = Utility.CreateStringArray(size )
-  dds[0] = "Uncompressed"
+  dds[0] = "UNCOMPRESSED"
   dds[1] = "BC1"
   dds[2] = "BC2"
   dds[3] = "BC3"
@@ -87,7 +89,21 @@ if(pagename == "Settings")
     AddheaderOption("Printscreen version "+Test.Version)
     
     addEmptyOption() 
-    PathID = AddInputOption("Path",Test.Path, OPTION_FLAG_NONE)
+  int OL=0
+
+  int O_flag = OPTION_FLAG_NONE as int 
+  OL= stringUtil.getLength(Test.Path)
+if(OL >30)
+  MyPath = "Json Long Path Option"
+  InfoText="Long Text Input Frpm json File MCM path editing Disabled"
+  O_Flag = OPTION_FLAG_DISABLED as int
+  
+else
+  MyPath=Test.Path
+  InfoText="Enter path to Image Storage"
+  O_flag = OPTION_FLAG_NONE as int
+endif
+    PathID = AddInputOption("Path",MyPath, O_Flag)
     AddEmptyOption() 
     int I = OptionArray().Find(Test.ImageType)
     if((I<0)||(I>5))
@@ -97,7 +113,7 @@ if(pagename == "Settings")
    AddEmptyOption() 
    RemoveMenuID = AddToggleOption("Automatic Menu Revoval",Test.Menu, 0)
    AddEmptyOption()
-   CompressionID =  AddSliderOption("Compression",Test.Compression,"{0}", 0)
+   CompressionID =  AddSliderOption("JPG?TIF Quality",Test.Compression,"{0}", 0)
    KeyCodeID = AddKeyMapOption( "Select Take Photo Key", Test.TakePhoto, 0)
   AddEmptyOption()   
    UseJsonFileID = AddToggleOption("Save/Restore Configuration",Test.UseJsonFile)
@@ -109,7 +125,7 @@ if(pagename == "Settings")
   if(J<0)
     J=0
   Endif
-DDS_CompressionID = AddMenuOption("DDS Compression",\
+DDS_CompressionID = AddMenuOption("DDS Mode",\
    DDSArray()[J],0)
   EndIf
 EndEvent
@@ -122,13 +138,13 @@ event OnOptionHighlight(int option)
   elseif(option== KeyCodeID )
     SetInfoText("Select an unused Key to TAKE pHOTO ")
   Elseif(option == PathID  )
-setinfoText("Enter path to Image Storage")
+setinfoText(InfoText)
 elseif(option == CompressionID)
 SetInfoText("Select QUALITY factor for jpg and Tiff files  50-LOWEST TO 100 HIGHEST quality")
 elseif(option == UseJsonFileID)
   SetInfoText("Enable Configuration Paramiters to be Saved/Restored")
 elseif(option == DDS_CompressionID)
-  SetInfoText("Select compression method for DDS files\nNote BC7 Takes several seconds")
+  SetInfoText("Select DDS mode of operation\nNote BC6h, BC7_Fast and BC7 Take several minutes")
   endif 
 EndEvent
 
@@ -137,7 +153,7 @@ EndEvent
 event OnOptionInputAccept(int a_option, string a_input)
 	if(a_Option == PathID)  
     Test.validate=1
-String Result=PrintScreen_formula_Script.PrintScreen(1, a_input,Test.ImageType,85.0 ,Test.DDs_Compression)
+String Result=PrintScreen_formula_Script.PrintScreen( test.Validate, a_input, Test.ImageType, Test.Compression,  Test.DDS_Compression) 
 		if(Result== "Success") 
       Test.Path =a_input
       SetInputOptionValue(a_Option,Test.Path,false)
@@ -155,6 +171,7 @@ Event  OnOptionSelect(int Option)
   if(Option == RemoveMenuID)
     Test.Menu = !Test.menu
     SetToggleOptionValue(Option,Test.menu, false)
+
   endif
   if(option == UseJsonFileID)
     Test.UseJsonFile = ! Test.UseJsonFile

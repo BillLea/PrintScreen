@@ -4,6 +4,7 @@ int Property KeyMapCode auto
 int Property KeyCode auto 
 int Property Validate auto
 int Property shots auto
+int Property HUD_Control auto
 bool Property UseJsonFile auto 
 String Property ImageType auto 
 String Property Path auto
@@ -23,6 +24,8 @@ String Property  KeyName_Compression auto
 String Property KeyName_DDS_Compression auto
 String Property KeyName_ImageType auto
 String Property KeyName_UseJsonFile auto
+String Property Keyname_HUD_Control Auto
+
 ; Common menu names for IsMenuOpen()
 ;"Item Card"
 ;"BarterMenu"
@@ -49,124 +52,93 @@ String Property KeyName_UseJsonFile auto
 ;"MainMenu"
 ;"Training Menu"
 ;"Cursor Menu"
-; Output from Claude Desktop May be an incomplete list appears
-;different from list used in Ultimate Immersion Mod by Luca
-;will have to explore this in more detail.
-;The term HUD works to turn off the menu but Not 
-;to restore it. tThis is because IsopenMenu wont return
-;propper result for HUD Menu. Just turn it on and forget about
-;syncronizing with other mods.
+;The more complicated HUD/Menu control methods have failed.
+;Rollback to using Consolutil which seems to effectivilty turn off the UI system,
+function toggleHud()
+    ConsoleUtil.ExecuteCommand("tm")
+endfunction
 
-Function DumpMenuInfo()
-  Debug.Trace("Checking menus...")
-  
-  ; Check which menu is actually open
-  if UI.IsMenuOpen("ItemCard")
-    Debug.MessageBox("ItemCard is open")
-endif
-
-  if UI.IsMenuOpen("InventoryMenu")
-      Debug.Trace("InventoryMenu is open")
-  endif
-  
-  if UI.IsMenuOpen("ContainerMenu")
-      Debug.Trace("ContainerMenu is open")
-  endif
-  
-  if UI.IsMenuOpen("BarterMenu")
-      Debug.Trace("BarterMenu is open")
-  endif
-  
-  if UI.IsMenuOpen("ItemMenu")
-      Debug.Trace("ItemMenu is open")
-  endif
+bool Function Hud_Alpha_0()
+  ;this function needed for various HUD UI mods
+  UI.SetInt("HUD Menu", "_root._alpha", 0)
+  UI.SetInt("TrueHUD", "_root._alpha", 0)
+  UI.SetInt("MoreHUD","_root._alpha",0)
+  UI.Setint("immersiveHud","_root._alpha", 0)
+  UI.SetInt("MiniMapMenu", "_root._alpha", 0)
+  UI.SetInt("Dialogue Menu", "_root._alpha", 0)  
+  UI.SetINt("CursorMenu","_root._alpha",0)
+  UI.Setint("CrosshairMenu", "_root._alpha",0)
+  ui.Setint("ActivateMenu", "_root._alpha",0)
+  ui.Setint("ContainerMenu", "_root_alpha",0)  
+  UI.setInt("StatsMenu", "_root._alpha",0)
+return true
+EndFunction
+bool function Hud_Alpha_100()
+  ;this function needed for various HUD UI mods
+UI.SetInt("HUD Menu", "_root._alpha", 100)
+UI.SetInt("MoreHud", "-root.alpha",100)
+UI.SetInt("TrueHUD", "_root.alpha", 100)
+UI.Setint("immersiveHud","_root.alpha",100)
+UI.SetInt("MiniMapMenu", "_root.alpha", 100)
+UI.SetInt("Dialogue Menu", "_root.alpha",100)  
+UI.SetINt("CursorMenu","_root.alpha",100)
+UI.Setint("CrosshairMenu", "_root.alpha",100)
+ui.Setint("ActivateMenu", "_root.alpha",100)
+ui.Setint("ContainerMenu", "_root.alpha",100)
+UI.setInt("StatsMenu", "_root.alpha",100)
+return true
 EndFunction
 
 function Sanatize_ImageType()
   If(Imagetype == "png")
     return
-  elseif(Imagetype == "bmp")
+  elseif(Imagetype == "BMP")
     return
-  elseif(Imagetype == "jpeg")
+  elseif(Imagetype == "JPEG")
     return
-  elseif(ImageType == "gif")
+  elseif(ImageType == "GIF")
     return
-  elseif(Imagetype == "Tif")
+  elseif(Imagetype == "TIF")
     Return
-    Elseif(ImageType == "dds")
+    Elseif(ImageType == "DDS")
     return
   else
-    ImageType = "png"
+    ImageType = "PNG"
     return
   endif 
 endFunction
 function Sanatize_DDS_Compression()
-  if(DDS_Compression == "uncompressed")
+  if(DDS_Compression == "UNCOMPRSSED")
     return
   ElseIF(DDS_Compression == "BC1")
     return
   elseif(DDS_Compression == "BC2")
     return
-  elseif(DDS_Compression == "bc3")
+  elseif(DDS_Compression == "BC3")
     return
-  elseif(DDS_Compression == "bc4" )
+  elseif(DDS_Compression == "BC4" )
     return
   elseif(DDS_Compression == "BC5")
     return
-  Elseif(DDS_Compression == "bc6")
+  Elseif(DDS_Compression == "BC6H")
     return
-  elseif(DDS_Compression == "bc7_fast")
+  elseif(DDS_Compression == "BC7_FAST")
     return
-  elseif(DDS_Compression == "bc7")
+  elseif(DDS_Compression == "BC7")
     return
   else
-    DDS_Compression = "uncompressed"
+    DDS_Compression = "UNCOMPRESSED"  ;
     Return
   endif
 EndFunction
 
-bool Function IsMenuOpen(string MenuName)
- ;debug.MessageBox("ISMenu Open Returned " + menuName + " open "+ UI.IsMenuOpen(menuName)  )
-return  UI.IsMenuOpen(menuName)
-Endfunction
-
-function OpenMenus()
- ;Open everything.
- UI.SetInt("HUD Menu", "_root._alpha", 100)
- UI.SetInt("TrueHUD", "_root._alpha", 100)
- UI.Setint("immersiveHud","_root.alpha",100)
- UI.SetInt("MiniMapMenu", "_root._alpha", 100)
-
- UI.SetInt("Dialogue Menu","_root.alpha", 100)
- UI.SetINt("CursorMenu","_root.alpha",100)
- UI.SetInt("CrosshairMenu", "_root.alpha",100)
- UI.Setint("ActivateMenu", "_root.alpha",100) 
- UI.setInt("StatsMenu", "_root.alpha",100)
-  
-Return 
-EndFunction
-
-Function CloseMenus()  
-
-  ;Only close Open Menus 
-
-  UI.SetInt("HUD Menu", "_root._alpha", 0)
-  UI.SetInt("TrueHUD", "_root._alpha", 0)
-  UI.Setint("immersiveHud","_root.alpha", 0)
-  UI.SetInt("MiniMapMenu", "_root._alpha", 0)
-  UI.SetInt("Dialogue Menu", "_root._alpha", 0)  
-  UI.SetINt("CursorMenu","_root.alpha",0)
-  UI.Setint("CrosshairMenu", "_root.alpha",0)
-  ui.Setint("ActivateMenu", "_root.alpha",0)
-  UI.setInt("StatsMenu", "_root.alpha",0)
-
-return 
-EndFunction
 
 Event onInit()
     ;Define Default values
-    Version="1.5.0"    
-    shots = 0    
+    Version="1.6.0"    
+    shots = 0 
+    menu =true
+ 
     bConfigOpen = false 
     UseJsonFile=False
     JsonFilename = "Printscreen_Configure"
@@ -175,23 +147,28 @@ Event onInit()
     KeyName_TakePhoto= "TakePhoto"
     KeyName_Path= "Path"
     Keyname_Menu = "Menu"
-    KeyName_UseJsonFile = "UseJsonFile"
-KeyName_DDS_Compression = "DDS_Compression"
 
+    KeyName_UseJsonFile = "UseJsonFile"
+    KeyName_DDS_Compression = "DDS_Compression"
+;Set defaults
     Menu = true
     TakePhoto = 14
     Imagetype = "PNG"
     Path = "C:/Pictures" 
 	  Compression = 85.0 
-    DDS_Compression  = "No Compresssion"
+    DDS_Compression  = "UNCOMPRESSED"
     RegisterForKey(TakePhoto)
-;Validate initial path on startup
+
+;Validate initial path on startup Note 
+;the validation process will try to create c:/pictures but this
+;is a standard windows directory and should always extist and be writable. A failure here
+;means a problem with the operating system you will have to fix.
  Result = PrintScreen_formula_SCript.PrintScreen(1,Path,Imagetype,Compression,DDS_Compression )
 if(Result != "Success")
   Debug.Notification("Printscreen - On Initialization Path failed validation \n use MCM to fix")
 
 else
-  ;Debug.MessageBox("Path validated succeccfully\n"+ Path)
+;Debug.MessageBox("Path validated succeccfully\n"+ Path)
 
 endif
 ;json logic. How to determine if a jason file should be loaded.
@@ -208,10 +185,12 @@ jsonUtil.SetFloatValue(jsonFileName, KeyName_Compression,Compression)
 jsonUtil.SetStringValue(jsonFilename, KeyName_DDS_Compression,DDS_Compression)
 if(menu)
   jsonUtil.SetIntValue(jsonFileName, Keyname_Menu,1)
+
 else
-  jsonUtil.SetIntValue(jsonFileName, Keyname_Menu,0)
+  jsonUtil.SetIntValue(jsonFileName, KeyName_Menu,0)
+  
 Endif
-jsonUtil.SetStringValue(jsonFilename, Keyname_ImageType, ImageType)
+jsonUtil.SetStringValue(jsonFilename, KeyName_ImageType, ImageType)
 if(useJsonFile)
   jsonUtil.SetIntValue(jsonFileName,KeyName_UseJsonFile,1)
 else
@@ -230,7 +209,7 @@ if(JsonUtil.isGood(jsonFilename) && (jsonUtil.getIntValue(jsonFileName,KeyName_U
   Sanatize_DDS_Compression()
   TakePhoto = JsonUtil.getIntvalue(jsonFileName, KeyName_TakePhoto)
   if(jsonUtil.getintvalue(jsonFileName,Keyname_Menu) == 1 )
-    Menu = True     
+    Menu = True
   else
     Menu = False
   endif
@@ -241,10 +220,11 @@ if(JsonUtil.isGood(jsonFilename) && (jsonUtil.getIntValue(jsonFileName,KeyName_U
   Endif
 
 String TestPath = JsonUtil.GetStringValue(jsonFileName, KeyName_Path)
-Result = PrintScreen_formula_SCript.PrintScreen(1,TestPath,Imagetype,Compression,DDS_Compression )
+;Debug.MessageBox ("json path was:\n " + TestPath)
+Result = PrintScreen_formula_SCript.PrintScreen(1,TestPath,"PNG",85.0,"BC1" )
 if(Result != "Success")
-  debug.messageBox("Printscreen - Json Path failed validation \n use MCM to fix")
-  
+  debug.messageBox("Printscreen - Json Path failed Edit json file to fix")
+
 else
  ; Debug.MessageBox("Path validated succeccfully\n"+ Path)
   Path = TestPath
@@ -260,19 +240,20 @@ Event OnKeyUP(int theKey, float holdtime)
       ;Debug.MessageBox("Printscreen Returning faild entry tests")
   return
   Endif
-  
-  if(menu) 
-    ;Debug.MessageBox("Closing Menues")   
-    CloseMenus() 
+  if(Menu)
+  toggleHud()
+   Hud_Alpha_0()
   endif
-  ;Debug.MessageBox("Calling PrintScreen function")
-  Result = PrintScreen_Formula_SCript.PrintScreen(0,Path,ImageType, Compression, DDS_Compression)
+
+;  Debug.MessageBox("Calling PrintScreen function with HUD Control: " + HuD_Control)
+
+  Result = PrintScreen_Formula_SCript.PrintScreen(0,Path,ImageType, Compression,DDS_Compression)
     if(Result == "Success")
        Shots = shots + 1
     Endif
     ;regardless of rresult restore menues
-  if(menu)
-    ;Debug.MessageBox("Open Menues")
-    OpenMenus()
-  endif
+    if(Menu) 
+      toggleHud()     
+      Hud_Alpha_100()
+    endif
 EndEvent

@@ -12,6 +12,6 @@ Debug.MessageBox("Printscreen version " + Test.Version +"\n" + \
 "\n The Path is: "+ Test.Path + \
 "\n Automatic HUD/menu removal is: "+ Test.menu + \
 "\n The Photo Key is "+ KeyName  + \
-"\n" + Test.shots + " screenshots taken this session")
+"\n" + Test.shots + " Sreenshots taken this session")
 
 EndEvent 

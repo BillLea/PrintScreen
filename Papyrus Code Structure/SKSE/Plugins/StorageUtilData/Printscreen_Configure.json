@@ -11,8 +11,8 @@
 	},
 	"string" : 
 	{
-		"dds_compression" : "bc7",
-		"imagetype" : "dds",
-		"path" : "C:/Pictures/Test/Vanilla"
+		"dds_compression" : "UNCOMPRESSED",
+		"imagetype" : "png",
+		"path" : "C:/Pictures"
 	}
 }
